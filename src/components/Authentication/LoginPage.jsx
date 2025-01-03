@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import "./loginPage.css";
+import { login } from "../../services/userServices";
 
 const schema = z.object({
   email: z
@@ -16,12 +17,24 @@ const schema = z.object({
 });
 
 const LohinPage = () => {
+  const [formError, setFormError] = useState("");
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
-  const onSubmit = (formData) => console.log(formData);
+
+  const onSubmit = async (formData) => {
+    try {
+      await login(formData);
+      window.location = "/";
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setFormError(err.response.data.message);
+      }
+    }
+  };
+
   return (
     <section className="align_center form_page">
       <form className="authentication_form" onSubmit={handleSubmit(onSubmit)}>
@@ -58,6 +71,7 @@ const LohinPage = () => {
               <em className="form_error">{errors.password.message}</em>
             )}
           </div>
+          {formError && <em className="form_error">{formError}</em>}
           <button type="submit" className="search_button form_submit">
             Submit
           </button>

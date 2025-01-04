@@ -4,7 +4,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import "./loginPage.css";
-import { login } from "../../services/userServices";
+import { getUser, login } from "../../services/userServices";
+import { Navigate, useLocation } from "react-router-dom";
 
 const schema = z.object({
   email: z
@@ -16,8 +17,11 @@ const schema = z.object({
     .min(8, { message: "Password should be at least 8 characters" }),
 });
 
-const LohinPage = () => {
+const LoginPage = () => {
   const [formError, setFormError] = useState("");
+  const location = useLocation();
+  console.log("Login location:", location);
+
   const {
     register,
     handleSubmit,
@@ -27,13 +31,19 @@ const LohinPage = () => {
   const onSubmit = async (formData) => {
     try {
       await login(formData);
-      window.location = "/";
+
+      const { state } = location;
+      window.location = state ? state.from : "/";
     } catch (err) {
       if (err.response && err.response.status === 400) {
         setFormError(err.response.data.message);
       }
     }
   };
+
+  if (getUser()) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <section className="align_center form_page">
@@ -81,4 +91,4 @@ const LohinPage = () => {
   );
 };
 
-export default LohinPage;
+export default LoginPage;

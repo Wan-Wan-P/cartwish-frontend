@@ -18,6 +18,8 @@
     "react-hook-form": "^7.43.9",
     "react-loading-skeleton": "^3.5.0",
     "react-router-dom": "^6.11.2",
+    "react-scripts": "^5.0.1",
+    "react-toastify": "^9.0.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
